@@ -48,7 +48,7 @@ public class Trello_Task {
                 .getScreenshotAs(OutputType.FILE);
 
         FileUtils.copyFile(File,
-                new File("D:\\Trello Task\\src\\main\\java\\ScreenShot"
+                new File("D:\\Trello Task\\src\\main\\ScreenShot"
                         + FileName + ".jpeg"));
     }
 
