@@ -21,6 +21,10 @@ public class Trello_Task {
             "webdriver.chrome.driver",
             "C:\\Users\\SG\\Downloads\\chromedriver_win32\\chromedriver.exe");
 
+    static String password = "Welcome@2023";
+
+    static String loginId = "muralid.800@gmail.com";
+
     static WebDriver driver = new ChromeDriver();
 
     //    Initializing the Wait.
@@ -70,7 +74,7 @@ public class Trello_Task {
         TakeScreenshot("LoginPage");
         WebElement inputUserId = driver.findElement(By.xpath("//input[@id='user']"));
         waitForElementClickable(inputUserId);
-        enterValue(inputUserId, "muralid.800@gmail.com");
+        enterValue(inputUserId, loginId);
         WebElement btnContinue = driver.findElement(By.xpath("//input[@type='submit']"));
         btnContinue.click();
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@id='login-submit']")));
@@ -78,7 +82,7 @@ public class Trello_Task {
         waitForElement(btnSubmit);
         WebElement inputPassword = driver.findElement(By.xpath("//input[@id='password']"));
         waitForElementClickable(inputPassword);
-        enterValue(inputPassword, "Welcome@2023");
+        enterValue(inputPassword, password);
         btnSubmit.click();
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='board']")));
         WebElement elmntBoard = driver.findElement(By.xpath("//div[@id='board']"));
@@ -92,7 +96,7 @@ public class Trello_Task {
         }
         System.out.println("Actual Items are : " + lstActualItems);
 
-//        Now, Create 2 new lists
+//        Now, Create 2 new lists naming List A and List B
 
         WebElement btnAddNewList = driver.findElement(By.xpath("//a/following::span[@class='placeholder']"));
         WebElement inputListName = driver.findElement(By.xpath("//input[contains(@placeholder,'Enter list title')]"));
@@ -170,12 +174,21 @@ public class Trello_Task {
         TakeScreenshot("After List B Sub-Task Creation");
 
         //Now, Performing Drag and Drop
-        WebElement ListASubtaskDraggable = driver.findElement(By.xpath("(//h2[normalize-space()='List A']/following::span[contains(@class,'list-card-title')])[2]"));
+
         List<WebElement> LstBSubtaskDroppable = driver.findElements(By.xpath("//h2[normalize-space()='List B']/following::span[contains(@class,'list-card-title')]"));
         System.out.println("Before Dropping the Task To List B, The List B length is >>>> " + LstBSubtaskDroppable.size());
-        Actions dragAndDrop = new Actions(driver);
-        WebElement ListBSubtaskDroppable = driver.findElement(By.xpath("//h2[normalize-space()='List B']/following::span[contains(@class,'list-card-title')]"));
-        dragAndDrop.dragAndDrop(ListASubtaskDraggable, ListBSubtaskDroppable).build().perform();
+        WebElement ListASubtaskDraggable = driver.findElement(By.xpath("(//h2[normalize-space()='List A']/following::span[contains(@class,'list-card-title')])[2]"));
+        waitForElementClickable(ListASubtaskDraggable);
+        Actions actions = new Actions(driver);
+        try {
+            WebElement ListBSubtaskDroppable = driver.findElement(By.xpath("//h2[normalize-space()='List B']/following::span[contains(@class,'list-card-title')]"));
+            waitForElementClickable(ListBSubtaskDroppable);
+            actions.dragAndDrop(ListASubtaskDraggable, ListBSubtaskDroppable).build().perform();
+        } catch (org.openqa.selenium.StaleElementReferenceException ex) {
+            WebElement ListBSubTaskDroppable = driver.findElement(By.xpath("//h2[normalize-space()='List B']/following::span[contains(@class,'list-card-title')]"));
+            waitForElementClickable(ListBSubTaskDroppable);
+            actions.dragAndDrop(ListASubtaskDraggable, ListBSubTaskDroppable).build().perform();
+        }
         List<WebElement> LstBSubtaskAfterDropped = driver.findElements(By.xpath("//h2[normalize-space()='List B']/following::span[contains(@class,'list-card-title')]"));
         System.out.println("After Dropping the Task To List B, The List B length is >>>> " + LstBSubtaskAfterDropped.size());
         if (LstBSubtaskAfterDropped.size() > 1) {
